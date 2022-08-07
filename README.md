@@ -1,4 +1,4 @@
-# Superior Rolls 5e - A FoundryVTT Module based on _Superior Rolls 5e_.
+# Superior Rolls 5e - A FoundryVTT Module based on _Better Rolls 5e_.
 
 A Foundry VTT module that replaces the built in rolling system for DnD5e. It allows for quick, compounded rolls for items, ability checks saving throws, and just about any roll you might want. Though initially a fork of Hooking's [Item Sheet Buttons](https://gitlab.com/hooking/foundry-vtt---item-sheet-buttons) module, it now includes several roll templates designed for Foundry's 5e sheets to increase speed of play. Felix's Chat Damage Buttons module has also been implemented into core Superior Rolls.
 
