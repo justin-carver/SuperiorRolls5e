@@ -1,7 +1,5 @@
-# Better Rolls for 5e - A FoundryVTT Module
+# Superior Rolls 5e - A FoundryVTT Module based on *Better Rolls 5e*.
 A Foundry VTT module that replaces the built in rolling system for DnD5e. It allows for quick, compounded rolls for items, ability checks saving throws, and just about any roll you might want. Though initially a fork of Hooking's [Item Sheet Buttons](https://gitlab.com/hooking/foundry-vtt---item-sheet-buttons) module, it now includes several roll templates designed for Foundry's 5e sheets to increase speed of play. Felix's Chat Damage Buttons module has also been implemented into core Better Rolls. 
-
-If you are feeling generous, and would like to support my work, you can do so through this [Paypal](https://www.paypal.me/RedReignDonate) link. Thank you!
 
 ## Incompatible Modules
 - Mars (replaces the core roller, competing directly with Better Rolls. Its one or the other)
@@ -11,20 +9,8 @@ If you are feeling generous, and would like to support my work, you can do so th
 - Midi QOL: more or less works, but make sure to enable fast forward attack in the midi options. If auto hit detection is enabled in midi, you'll need to use the query roll mode in Better Rolls to have more accurate results (dual mode / triple mode will throw it off as midi does not detect edits in better rolls).
 - J2BA Animations: Only for attack rolls. If set to play on damage rolls it won't work.
 
-## Installation
-### Method 1
-- Start up Foundry and click "Install Module" in the "Add-On Modules" tab.
-- Search for "Better Rolls" in the pop up window.
-- Click "Install" and it should appear in your modules list.
-- Enjoy!
-
 ### Method 2
-- Start up Foundry and click "Install Module" in the "Add-On Modules" tab.
-- Paste one of the following:
-  - Latest release: `https://raw.githubusercontent.com/RedReign/FoundryVTT-BetterRolls5e/master/betterrolls5e/module.json`
-  - The module.json listed in any of the releases (for either an older version or an alpha version)
-- Click "Install" and it should appear in your modules list.
-- Enjoy!
+- GitHub `module.json` import via Manifest URL.
 
 ## Implemented Features
 ### Multirolls and Roll Modes
