@@ -4,7 +4,7 @@ import { BRSettings } from "./settings.js";
 import { i18n, Utils } from "./utils/index.js";
 
 /**
- * Class that encapsulates a better rolls card at runtime.
+ * Class that encapsulates a Superior Rolls card at runtime.
  * When a chat message enters the chat it should be binded
  * with BetterRollsChatCard.bind().
  */
@@ -54,7 +54,7 @@ export class BetterRollsChatCard {
 				this._onHover(html);
 				console.log("BetterRolls5e | Hover Buttons Initialized");
 			}
-		})
+		});
 	}
 
 	/**
@@ -64,7 +64,7 @@ export class BetterRollsChatCard {
 	 * @param {JQuery} html
 	 */
 	static async bind(message, html) {
-		const chatCard = html.find('.red-full');
+		const chatCard = html.find(".red-full");
 		if (chatCard.length === 0) {
 			return null;
 		}
@@ -87,13 +87,16 @@ export class BetterRollsChatCard {
 				gsap?.from(html.get(), {
 					"border-color": "red",
 					"box-shadow": "0 0 6px inset #ff6400",
-					duration: 2});
+					duration: 2,
+				});
 			}, 0);
 
 			// Scroll to bottom if the last card had updated
 			const last = game.messages.contents[game.messages.size - 1];
 			if (last?.id === existing.id) {
-				window.setTimeout(() => { ui.chat.scrollBottom(); }, 0);
+				window.setTimeout(() => {
+					ui.chat.scrollBottom();
+				}, 0);
 			}
 
 			return existing;
@@ -115,12 +118,12 @@ export class BetterRollsChatCard {
 		options.push({
 			name: i18n("br5e.chatContext.repeat"),
 			icon: '<i class="fas fa-redo"></i>',
-			condition: li => {
+			condition: (li) => {
 				const binding = getBinding(li);
 				return binding && binding.roll.canRepeat();
 			},
-			callback: li => getBinding(li)?.roll.repeat({ event })
-		})
+			callback: (li) => getBinding(li)?.roll.repeat({ event }),
+		});
 	}
 
 	/**
@@ -149,11 +152,11 @@ export class BetterRollsChatCard {
 			}
 
 			// Handle clicking the multi-roll overlay buttons
-			html.find(".multiroll-overlay-br button").click(async event => {
+			html.find(".multiroll-overlay-br button").click(async (event) => {
 				event.preventDefault();
 				event.stopPropagation();
 				const button = event.currentTarget;
-				const id = $(button).parents(".red-dual").attr('data-id');
+				const id = $(button).parents(".red-dual").attr("data-id");
 				const action = button.dataset.action;
 				if (action === "rollState") {
 					const rollState = button.dataset.state;
@@ -165,52 +168,57 @@ export class BetterRollsChatCard {
 		}
 
 		// Setup augment crit and apply damage button
-		const templateName = (BRSettings.chatDamageButtonsEnabled) ? "red-overlay-damage" : "red-overlay-damage-crit-only";
+		const templateName = BRSettings.chatDamageButtonsEnabled
+			? "red-overlay-damage"
+			: "red-overlay-damage-crit-only";
 		const templateDamage = await renderTemplate(`modules/betterrolls5e/templates/${templateName}.html`);
-		const dmgElements = html.find('.dice-total .red-base-die, .dice-total .red-extra-die').parents('.dice-row').toArray();
-		const customElements = html.find('[data-type=custom] .red-base-die').toArray();
+		const dmgElements = html
+			.find(".dice-total .red-base-die, .dice-total .red-extra-die")
+			.parents(".dice-row")
+			.toArray();
+		const customElements = html.find("[data-type=custom] .red-base-die").toArray();
 
 		// Add chat damage buttons
-		[...dmgElements, ...customElements].forEach(element => {
+		[...dmgElements, ...customElements].forEach((element) => {
 			element = $(element);
 			element.append($(templateDamage));
 
 			// Remove crit button if already rolled
 			// TODO: Move this elsewhere. There's a known bug when crit settings are changed suddenly
 			// If Crit (setting) is disabled, then re-enabled, crit buttons don't get re-added
-			const id = element.parents('.dice-roll').attr('data-id');
+			const id = element.parents(".dice-roll").attr("data-id");
 			const entry = this.roll?.getEntry(id);
 			if (!this.roll?.canCrit(entry)) {
-				element.find('.crit-button').remove();
+				element.find(".crit-button").remove();
 			}
 		});
 
 		// Handle apply damage overlay button events
-		html.find('.apply-damage-buttons button').click(async ev => {
+		html.find(".apply-damage-buttons button").click(async (ev) => {
 			ev.preventDefault();
 			ev.stopPropagation();
 
 			// find out the proper dmg thats supposed to be applied
 			const dmgElement = $(ev.target.parentNode.parentNode.parentNode.parentNode);
 			const damageType = dmgElement.find(".dice-total").attr("data-damagetype");
-			let dmg = dmgElement.find('.red-base-die').text();
+			let dmg = dmgElement.find(".red-base-die").text();
 
-			if (dmgElement.find('.red-extra-die').length > 0) {
-				const critDmg = dmgElement.find('.red-extra-die').text();
+			if (dmgElement.find(".red-extra-die").length > 0) {
+				const critDmg = dmgElement.find(".red-extra-die").text();
 				const dialogPosition = {
 					x: ev.originalEvent.screenX,
-					y: ev.originalEvent.screenY
+					y: ev.originalEvent.screenY,
 				};
 
 				dmg = await this._resolveCritDamage(Number(dmg), Number(critDmg), dialogPosition);
 			}
 
 			// getting the modifier depending on which of the buttons was pressed
-			const modifier = $(ev.target).closest("button").attr('data-modifier');
+			const modifier = $(ev.target).closest("button").attr("data-modifier");
 
 			// applying dmg to the targeted token and sending only the span that the button sits in
 			for (const actor of Utils.getTargetActors()) {
-				await this.applyDamage(actor, damageType, dmg, modifier)
+				await this.applyDamage(actor, damageType, dmg, modifier);
 			}
 
 			setTimeout(() => {
@@ -221,14 +229,16 @@ export class BetterRollsChatCard {
 		});
 
 		// Handle crit button application event
-		html.find('.crit-button').off().on('click', async (ev) => {
-			ev.preventDefault();
-			ev.stopPropagation();
-			const group = $(ev.target).parents('.dice-roll').attr('data-group');
-			if (await this.roll.forceCrit(group)) {
-				await this.roll.update();
-			}
-		});
+		html.find(".crit-button")
+			.off()
+			.on("click", async (ev) => {
+				ev.preventDefault();
+				ev.stopPropagation();
+				const group = $(ev.target).parents(".dice-roll").attr("data-group");
+				if (await this.roll.forceCrit(group)) {
+					await this.roll.update();
+				}
+			});
 
 		// Enable Hover Events (to show/hide the elements)
 		this._onHoverEnd(html);
@@ -244,8 +254,8 @@ export class BetterRollsChatCard {
 					title: i18n("br5e.chat.damageButtons.tempOverwrite.title"),
 					content: i18n("br5e.chat.damageButtons.tempOverwrite.content", {
 						original: actorData.attributes.hp.temp,
-						new: healing
-					})
+						new: healing,
+					}),
 				});
 
 				if (!overwrite) return;
@@ -263,9 +273,9 @@ export class BetterRollsChatCard {
 
 		// Apply Damage / Augment Crit
 		const controlled = canvas?.tokens.controlled.length > 0;
-		html.find('.multiroll-overlay-br').toggle(hasPermission);
-		html.find('.crit-button').toggle(hasPermission);
-		html.find('.apply-damage-buttons').toggle(controlled);
+		html.find(".multiroll-overlay-br").toggle(hasPermission);
+		html.find(".crit-button").toggle(hasPermission);
+		html.find(".apply-damage-buttons").toggle(controlled);
 	}
 
 	_onHoverEnd(html) {
@@ -282,7 +292,7 @@ export class BetterRollsChatCard {
 				const options = {
 					left: position.x,
 					top: position.y,
-					width: 100
+					width: 100,
 				};
 
 				const data = {
@@ -292,16 +302,20 @@ export class BetterRollsChatCard {
 						one: {
 							icon: '<i class="fas fa-check"></i>',
 							label: i18n("br5e.chat.damageButtons.critPrompt.yes"),
-							callback: () => { resolve(dmg + critdmg); }
+							callback: () => {
+								resolve(dmg + critdmg);
+							},
 						},
 						two: {
 							icon: '<i class="fas fa-times"></i>',
 							label: i18n("br5e.chat.damageButtons.critPrompt.no"),
-							callback: () => { resolve(dmg); }
-						}
+							callback: () => {
+								resolve(dmg);
+							},
+						},
 					},
-					default: "two"
-				}
+					default: "two",
+				};
 
 				new Dialog(data, options).render(true);
 			});
@@ -315,8 +329,8 @@ export class BetterRollsChatCard {
 	 * @private
 	 */
 	_setupCardButtons(html) {
-		html.find(".card-buttons").off()
-		html.off().click(async event => {
+		html.find(".card-buttons").off();
+		html.off().click(async (event) => {
 			const button = event.target.closest("button");
 			if (!button) return;
 
@@ -333,7 +347,7 @@ export class BetterRollsChatCard {
 		});
 	}
 
-	async _performAction(action, data, event={}) {
+	async _performAction(action, data, event = {}) {
 		if (action === "save") {
 			const actors = Utils.getTargetActors({ required: true });
 			const ability = data.ability;
@@ -356,11 +370,11 @@ export class BetterRollsChatCard {
 			const roll = this.roll;
 			let item = await roll.getItem();
 			if (data.ammo) {
-				item = item.parent.items.get(item.data.data.consume.target)
+				item = item.parent.items.get(item.data.data.consume.target);
 			}
 
-			let targets
-			if (item.data.data?.target?.type === 'self' && canvas.tokens?.controlled?.length) {
+			let targets;
+			if (item.data.data?.target?.type === "self" && canvas.tokens?.controlled?.length) {
 				targets = Utils.getTargetTokens();
 			} else {
 				targets = game.user.targets.size ? game.user.targets : Utils.getTargetTokens();
@@ -371,7 +385,7 @@ export class BetterRollsChatCard {
 				spellLevel: roll.params.slotLevel,
 				damageTotal: roll.totalDamage,
 				critical: roll.isCrit,
-				itemCardId: this.id
+				itemCardId: this.id,
 			});
 		}
 	}

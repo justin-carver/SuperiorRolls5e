@@ -3,7 +3,7 @@ import { BetterRollsChatCard } from "./chat-message.js";
 import { addItemSheetButtons, BetterRolls } from "./betterrolls5e.js";
 import { ItemUtils, Utils } from "./utils/index.js";
 import { addBetterRollsContent } from "./item-tab.js";
-import { patchCoreFunctions } from "./patching/index.js"
+import { patchCoreFunctions } from "./patching/index.js";
 import { migrate } from "./migration.js";
 
 // Attaches BetterRolls to actor sheet
@@ -14,7 +14,7 @@ Hooks.on("renderActorSheet5e", (app, html, data) => {
 	// this timeout allows other modules to modify the sheet before we do
 	setTimeout(() => {
 		if (game.settings.get("betterrolls5e", "rollButtonsEnabled")) {
-			addItemSheetButtons(app.object, html, data, triggeringElement, buttonContainer)
+			addItemSheetButtons(app.object, html, data, triggeringElement, buttonContainer);
 		}
 	}, 0);
 });
@@ -29,10 +29,8 @@ Hooks.once("init", () => {
 	patchCoreFunctions();
 
 	// Setup template partials
-	const prefix = "modules/betterrolls5e/templates"
-	loadTemplates([
-		`${prefix}/red-damage-crit.html`
-	]);
+	const prefix = "modules/betterrolls5e/templates";
+	loadTemplates([`${prefix}/red-damage-crit.html`]);
 });
 
 Hooks.on("ready", async () => {
@@ -56,7 +54,7 @@ Hooks.on("ready", async () => {
 		}
 	});
 
-	// Initialize Better Rolls
+	// Initialize Superior Rolls
 	window.BetterRolls = BetterRolls();
 	Hooks.call("readyBetterRolls");
 });
@@ -70,13 +68,14 @@ Hooks.on("getChatLogEntryContext", (html, options) => {
 		game.i18n.localize("DND5E.ChatContextDamage"),
 		game.i18n.localize("DND5E.ChatContextHealing"),
 		game.i18n.localize("DND5E.ChatContextDoubleDamage"),
-		game.i18n.localize("DND5E.ChatContextHalfDamage")
+		game.i18n.localize("DND5E.ChatContextHalfDamage"),
 	];
 
-	for (let i=options.length-1; i>=0; i--) {
+	for (let i = options.length - 1; i >= 0; i--) {
 		let option = options[i];
 		if (contextDamageLabels.includes(option.name)) {
-			option.condition = li => canvas.tokens.controlled.length && li.find(".dice-roll").length && !li.find(".red-full").length;
+			option.condition = (li) =>
+				canvas.tokens.controlled.length && li.find(".dice-roll").length && !li.find(".red-full").length;
 		}
 	}
 });

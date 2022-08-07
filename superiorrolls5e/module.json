@@ -1,0 +1,32 @@
+{
+	"name": "SuperiorRolls5e",
+	"title": "Superior Rolls for 5e",
+	"description": "An even more superior module for modifying certain sheet functions on Foundry VTT Character sheets for D&D 5th Edition, based on the original Superior Rolls 5e module.",
+	"author": "Justin Carver",
+	"authors": [],
+	"url": "https://github.com/justin-carver/SuperiorRolls5e/tree/master/superiorrolls5e",
+	"flags": {},
+	"version": "0.1",
+	"minimumCoreVersion": "9",
+	"compatibleCoreVersion": "9",
+	"scripts": ["greensock/dist/gsap.min.js"],
+	"esmodules": ["./scripts/index.js"],
+	"styles": ["./css/betterrolls5e.css"],
+	"languages": [
+		{
+			"lang": "en",
+			"name": "English",
+			"path": "lang/en.json"
+		}
+	],
+	"packs": [],
+	"system": ["dnd5e"],
+	"dependencies": [],
+	"socket": true,
+	"manifest": "https://raw.githubusercontent.com/justin-carver/SuperiorRolls5e/master/superiorrolls5e/module.json",
+	"download": "https://github.com/justin-carver/SuperiorRolls5e/releases/...",
+	"protected": false,
+	"coreTranslation": false,
+	"minimumSystemVersion": "1.5.2",
+	"library": false
+}

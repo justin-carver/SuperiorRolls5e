@@ -1,4 +1,4 @@
-import { isSave } from "../betterrolls5e.js";
+import { isSave } from "../superiorrolls5e.js";
 import { getSettings } from "../settings.js";
 import { DND5E } from "../../../../systems/dnd5e/module/config.js";
 
@@ -10,7 +10,7 @@ export const dnd5e = DND5E;
  * @param {string} key
  * @param {object?} data optional data that if given will do a format() instead
  */
-export function i18n(key, data=null) {
+export function i18n(key, data = null) {
 	if (data) {
 		return game.i18n.format(key, data);
 	}
@@ -23,10 +23,13 @@ export function i18n(key, data=null) {
  */
 function isMaestroOn() {
 	let output = false;
-	try { if (game.settings.get("maestro", "enableItemTrack")) {
-		output = true;
-	} }
-	catch { return false; }
+	try {
+		if (game.settings.get("maestro", "enableItemTrack")) {
+			output = true;
+		}
+	} catch {
+		return false;
+	}
 	return output;
 }
 
@@ -42,7 +45,7 @@ export class Utils {
 	 * @param {boolean} hasMaestroSound optional parameter to denote that maestro is enabled
 	 * @returns {string}
 	 */
-	static getDiceSound(hasMaestroSound=false) {
+	static getDiceSound(hasMaestroSound = false) {
 		const playRollSounds = game.settings.get("betterrolls5e", "playRollSounds");
 		if (playRollSounds && !game.dice3d?.isEnabled() && !hasMaestroSound) {
 			return CONFIG.sounds.dice;
@@ -55,7 +58,7 @@ export class Utils {
 		if (!Utils._playSoundLock) {
 			Utils._playSoundLock = true;
 			AudioHelper.play({ src: CONFIG.sounds.dice });
-			setTimeout(() => Utils._playSoundLock = false, 300);
+			setTimeout(() => (Utils._playSoundLock = false), 300);
 		}
 	}
 
@@ -67,11 +70,11 @@ export class Utils {
 		let blind = null;
 
 		rollMode = rollMode || game.settings.get("core", "rollMode");
-		if ( ["gmroll", "blindroll"].includes(rollMode) ) whisper = ChatMessage.getWhisperRecipients("GM");
-		if ( rollMode === "blindroll" ) blind = true;
-		else if ( rollMode === "selfroll" ) whisper = [game.user.id];
+		if (["gmroll", "blindroll"].includes(rollMode)) whisper = ChatMessage.getWhisperRecipients("GM");
+		if (rollMode === "blindroll") blind = true;
+		else if (rollMode === "selfroll") whisper = [game.user.id];
 
-		return { rollMode, whisper, blind }
+		return { rollMode, whisper, blind };
 	}
 
 	/**
@@ -81,14 +84,14 @@ export class Utils {
 	 * @param {boolean|number[]} critChecks dice to test, true for all
 	 * @param {Roll?} bonus optional bonus roll to add to the total
 	 */
-	static processRoll(roll, threshold, critChecks=true, bonus=null) {
+	static processRoll(roll, threshold, critChecks = true, bonus = null) {
 		if (!roll) return null;
 
 		let high = 0;
 		let low = 0;
 		for (const d of roll.dice) {
 			if (d.faces > 1 && (critChecks == true || critChecks.includes(d.faces))) {
-				for (const result of d.results.filter(r => !r.rerolled)) {
+				for (const result of d.results.filter((r) => !r.rerolled)) {
 					if (result.result >= (threshold || d.faces)) {
 						high += 1;
 					} else if (result.result == 1) {
@@ -119,13 +122,13 @@ export class Utils {
 	/**
 	 * Returns an {advantage, disadvantage} object when given an event.
 	 */
-	static eventToAdvantage(ev={}) {
+	static eventToAdvantage(ev = {}) {
 		if (ev.shiftKey) {
-			return {advantage: 1, disadvantage:0};
+			return { advantage: 1, disadvantage: 0 };
 		} else if (ev.ctrlKey || ev.metaKey) {
-			return {advantage: 0, disadvantage:1};
+			return { advantage: 0, disadvantage: 1 };
 		} else {
-			return {advantage: 0, disadvantage:0};
+			return { advantage: 0, disadvantage: 0 };
 		}
 	}
 
@@ -134,7 +137,14 @@ export class Utils {
 	 * @param {object} param0
 	 * @returns {import("../fields.js").RollState}
 	 */
-	static getRollState({rollState=null, event=null, advantage=null, disadvantage=null, adv=null, disadv=null}={}) {
+	static getRollState({
+		rollState = null,
+		event = null,
+		advantage = null,
+		disadvantage = null,
+		adv = null,
+		disadv = null,
+	} = {}) {
 		if (rollState) return rollState;
 		if (advantage || adv) return "highest";
 		if (disadvantage || disadv) return "lowest";
@@ -170,24 +180,22 @@ export class Utils {
 	 * Returns the item's roll data first, and then falls back to actor
 	 * @returns {object}
 	 */
-	static getRollData({item = null, actor = null, abilityMod, slotLevel=undefined}) {
-		return item ?
-			ItemUtils.getRollData(item, { abilityMod, slotLevel }) :
-			actor?.getRollData() ?? {};
+	static getRollData({ item = null, actor = null, abilityMod, slotLevel = undefined }) {
+		return item ? ItemUtils.getRollData(item, { abilityMod, slotLevel }) : actor?.getRollData() ?? {};
 	}
 
 	/**
 	 * Retrieves all tokens currently selected on the canvas. This is the normal select,
 	 * not the target select.
 	 */
-	static getTargetTokens({required=false}={}) {
+	static getTargetTokens({ required = false } = {}) {
 		const character = game.user.character;
 		const controlled = canvas.tokens.controlled;
 		if (!controlled.length && character) {
 			return [character];
 		}
 
-		const results = controlled.filter(a => a);
+		const results = controlled.filter((a) => a);
 		if (required && !controlled.length) {
 			ui.notifications.warn(game.i18n.localize("DND5E.ActionWarningNoToken"));
 		}
@@ -199,8 +207,10 @@ export class Utils {
 	 * Returns all selected actors
 	 * @param param1.required True if a warning should be shown if the list is empty
 	 */
-	static getTargetActors({required=false}={}) {
-		return Utils.getTargetTokens({required}).map(character => character.actor).filter(a => a);
+	static getTargetActors({ required = false } = {}) {
+		return Utils.getTargetTokens({ required })
+			.map((character) => character.actor)
+			.filter((a) => a);
 	}
 
 	/**
@@ -211,7 +221,7 @@ export class Utils {
 	static getRollFlavors(...rolls) {
 		const flavors = new Set();
 		for (const roll of rolls) {
-			for (const term of (roll?.terms ?? roll?.results ?? [])) {
+			for (const term of roll?.terms ?? roll?.results ?? []) {
 				if (term.options?.flavor) {
 					flavors.add(term.options.flavor);
 				}
@@ -340,10 +350,13 @@ export class ActorUtils {
 	static getImage(actor) {
 		if (!actor) return null;
 
-		const actorImage = (actor.data.img && actor.data.img !== CONST.DEFAULT_TOKEN && !actor.data.img.includes("*")) ? actor.data.img : false;
+		const actorImage =
+			actor.data.img && actor.data.img !== CONST.DEFAULT_TOKEN && !actor.data.img.includes("*")
+				? actor.data.img
+				: false;
 		const tokenImage = actor.token?.data?.img ? actor.token.data.img : actor.data.token.img;
 
-		switch(game.settings.get("betterrolls5e", "defaultRollArt")) {
+		switch (game.settings.get("betterrolls5e", "defaultRollArt")) {
 			case "actor":
 				return actorImage || tokenImage;
 			case "token":
@@ -362,7 +375,7 @@ export class ActorUtils {
 			fastForward: true,
 			chatMessage: false,
 			advantage: rollState === "highest",
-			disadvantage: rollState === "lowest"
+			disadvantage: rollState === "lowest",
 		});
 	}
 
@@ -378,7 +391,7 @@ export class ActorUtils {
 			fastForward: true,
 			chatMessage: false,
 			advantage: rollState === "highest",
-			disadvantage: rollState === "lowest"
+			disadvantage: rollState === "lowest",
 		});
 	}
 
@@ -394,7 +407,7 @@ export class ActorUtils {
 			fastForward: true,
 			chatMessage: false,
 			advantage: rollState === "highest",
-			disadvantage: rollState === "lowest"
+			disadvantage: rollState === "lowest",
 		});
 	}
 }
@@ -426,13 +439,13 @@ export class ItemUtils {
 	}
 
 	static getDuration(item) {
-		const {duration} = item.data.data;
+		const { duration } = item.data.data;
 
 		if (!duration?.units) {
 			return null;
 		}
 
-		return `${duration.value ? duration.value : ""} ${dnd5e.timePeriods[duration.units]}`.trim()
+		return `${duration.value ? duration.value : ""} ${dnd5e.timePeriods[duration.units]}`.trim();
 	}
 
 	static getRange(item) {
@@ -443,7 +456,7 @@ export class ItemUtils {
 		}
 
 		const standardRange = range.value || "";
-		const longRange = (range.long && range.long !== range.value) ? `/${range.long}` : "";
+		const longRange = range.long && range.long !== range.value ? `/${range.long}` : "";
 		const rangeUnit = range.units ? dnd5e.distanceUnits[range.units] : "";
 
 		return `${standardRange}${longRange} ${rangeUnit}`.trim();
@@ -467,7 +480,7 @@ export class ItemUtils {
 			componentString += i18n("br5e.chat.abrMaterial");
 
 			if (materials.value) {
-				const materialConsumption = materials.consumed ? i18n("br5e.chat.consumedBySpell") : ""
+				const materialConsumption = materials.consumed ? i18n("br5e.chat.consumedBySpell") : "";
 				componentString += ` (${materials.value}` + ` ${materialConsumption})`;
 			}
 		}
@@ -482,12 +495,13 @@ export class ItemUtils {
 			return null;
 		}
 
-		const targetDistance = target.units && target?.units !== "none" ? ` (${target.value} ${dnd5e.distanceUnits[target.units]})` : "";
+		const targetDistance =
+			target.units && target?.units !== "none" ? ` (${target.value} ${dnd5e.distanceUnits[target.units]})` : "";
 		return i18n("Target: ") + dnd5e.targetTypes[target.type] + targetDistance;
 	}
 
 	/**
-	 * Ensures that better rolls flag data is set on the item if applicable.
+	 * Ensures that Superior Rolls flag data is set on the item if applicable.
 	 * Does not perform an item update, only assigns to data
 	 * @param {Item} item item to update flags for
 	 */
@@ -502,7 +516,9 @@ export class ItemUtils {
 	 * @param {*} itemData The item.data property to be updated
 	 */
 	static createFlags(itemData) {
-		if (!itemData || CONFIG.betterRolls5e.validItemTypes.indexOf(itemData.type) == -1) { return; }
+		if (!itemData || CONFIG.betterRolls5e.validItemTypes.indexOf(itemData.type) == -1) {
+			return;
+		}
 
 		// Initialize flags
 		itemData.flags = itemData.flags ?? {};
@@ -517,7 +533,7 @@ export class ItemUtils {
 
 			// Make quickDamage flags if they don't exist
 			if (!flags.quickDamage) {
-				flags.quickDamage = {type: "Array", value: [], altValue: []};
+				flags.quickDamage = { type: "Array", value: [], altValue: [] };
 			}
 
 			for (let i = 0; i < itemData.data.damage?.parts.length; i++) {
@@ -545,7 +561,7 @@ export class ItemUtils {
 	 */
 	static hasMaestroSound(item) {
 		if (!item) return false;
-		return (isMaestroOn() && item.data.flags.maestro && item.data.flags.maestro.track) ? true : false;
+		return isMaestroOn() && item.data.flags.maestro && item.data.flags.maestro.track ? true : false;
 	}
 
 	/**
@@ -567,7 +583,7 @@ export class ItemUtils {
 	 * This uses item.getRollData(), but allows overriding with additional properties
 	 * @param {*} item
 	 */
-	static getRollData(item, { abilityMod, slotLevel=undefined } = {}) {
+	static getRollData(item, { abilityMod, slotLevel = undefined } = {}) {
 		const rollData = item.getRollData();
 		if (rollData) {
 			const abl = abilityMod ?? item?.abilityMod;
@@ -591,7 +607,7 @@ export class ItemUtils {
 			fastForward: true,
 			chatMessage: false,
 			advantage: rollState === "highest",
-			disadvantage: rollState === "lowest"
+			disadvantage: rollState === "lowest",
 		});
 	}
 
@@ -605,7 +621,7 @@ export class ItemUtils {
 			fastForward: true,
 			chatMessage: false,
 			advantage: rollState === "highest",
-			disadvantage: rollState === "lowest"
+			disadvantage: rollState === "lowest",
 		});
 	}
 
@@ -643,35 +659,35 @@ export class ItemUtils {
 	 * @param {number?} param2.critDice extra crit dice
 	 * @returns {Roll | null} the crit result, or null if there is no dice
 	 */
-	static getCritRoll(baseFormula, baseTotal, {settings=null, extraCritDice=null}={}) {
+	static getCritRoll(baseFormula, baseTotal, { settings = null, extraCritDice = null } = {}) {
 		let critRoll = ItemUtils.getBaseCritRoll(baseFormula);
 		if (!critRoll) return null;
 
 		critRoll.alter(1, extraCritDice ?? 0);
-		critRoll.roll({async: false});
+		critRoll.roll({ async: false });
 
 		const { critBehavior } = getSettings(settings);
 
 		// If critBehavior = 2, maximize base dice
 		if (critBehavior === "2") {
-			critRoll = new Roll(critRoll.formula).evaluate({maximize:true, async: false});
+			critRoll = new Roll(critRoll.formula).evaluate({ maximize: true, async: false });
 		}
 
 		// If critBehavior = 3, maximize base and maximize crit dice
 		// Need to get the difference because we're not able to change the base roll from here so we add it to the critical roll
 		else if (critBehavior === "3") {
-			let maxDifference = new Roll(baseFormula).evaluate({maximize:true, async: false}).total - baseTotal;
+			let maxDifference = new Roll(baseFormula).evaluate({ maximize: true, async: false }).total - baseTotal;
 			let newFormula = critRoll.formula + "+" + maxDifference.toString();
-			critRoll = new Roll(newFormula).evaluate({maximize:true, async: false});
+			critRoll = new Roll(newFormula).evaluate({ maximize: true, async: false });
 		}
 
 		// If critBehavior = 4, maximize base dice and roll crit dice
 		// Need to get the difference because we're not able to change the base roll from here so we add it to the critical roll
 		else if (critBehavior === "4") {
-			let maxRoll = new Roll(baseFormula).evaluate({maximize:true, async: false});
+			let maxRoll = new Roll(baseFormula).evaluate({ maximize: true, async: false });
 			let maxDifference = maxRoll.total - baseTotal;
 			let newFormula = critRoll.formula + "+" + maxDifference.toString();
-			critRoll = new Roll(newFormula).evaluate({async: false});
+			critRoll = new Roll(newFormula).evaluate({ async: false });
 		}
 
 		return critRoll;
@@ -684,7 +700,7 @@ export class ItemUtils {
 	 */
 	static scaleDamage(item, spellLevel, damageIndex, rollData) {
 		if (item?.data.type === "spell") {
-			const versatile = (damageIndex === "versatile");
+			const versatile = damageIndex === "versatile";
 			if (versatile) {
 				damageIndex = 0;
 			}
@@ -698,11 +714,12 @@ export class ItemUtils {
 
 			// Scale damage from up-casting spells
 			if (itemData.scaling.mode === "cantrip") {
-				const level = item.actor.data.type === "character" ?
-					actorData.details.level :
-					(actorData.details.spellLevel || actorData.details.cr);
+				const level =
+					item.actor.data.type === "character"
+						? actorData.details.level
+						: actorData.details.spellLevel || actorData.details.cr;
 				item._scaleCantripDamage(parts, scale, level, rollData);
-			} else if (spellLevel && (itemData.scaling.mode === "level") && itemData.scaling.formula) {
+			} else if (spellLevel && itemData.scaling.mode === "level" && itemData.scaling.formula) {
 				item._scaleSpellDamage(parts, itemData.level, spellLevel, scale, rollData);
 			}
 
@@ -711,7 +728,6 @@ export class ItemUtils {
 
 		return null;
 	}
-
 
 	/**
 	 * A function for returning the properties of an item, which can then be printed as the footer of a chat card.
@@ -724,17 +740,17 @@ export class ItemUtils {
 
 		const range = ItemUtils.getRange(item);
 		const target = ItemUtils.getTarget(item);
-		const activation = ItemUtils.getActivationData(item)
+		const activation = ItemUtils.getActivationData(item);
 		const duration = ItemUtils.getDuration(item);
 
-		switch(item.data.type) {
+		switch (item.data.type) {
 			case "weapon":
 				properties = [
 					dnd5e.weaponTypes[data.weaponType],
 					range,
 					target,
 					data.proficient ? "" : i18n("Not Proficient"),
-					data.weight ? data.weight + " " + i18n("lbs.") : null
+					data.weight ? data.weight + " " + i18n("lbs.") : null,
 				];
 				for (const prop in data.properties) {
 					if (data.properties[prop] === true) {
@@ -756,17 +772,11 @@ export class ItemUtils {
 					data.components.concentration ? i18n("Concentration") : null,
 					ItemUtils.getSpellComponents(item),
 					range,
-					target
+					target,
 				];
 				break;
 			case "feat":
-				properties = [
-					data.requirements,
-					activation,
-					duration,
-					range,
-					target,
-				];
+				properties = [data.requirements, activation, duration, range, target];
 				break;
 			case "consumable":
 				properties = [
@@ -794,10 +804,10 @@ export class ItemUtils {
 				];
 				break;
 			case "loot":
-				properties = [data.weight ? item.data.totalWeight + " lbs." : null]
+				properties = [data.weight ? item.data.totalWeight + " lbs." : null];
 				break;
 		}
-		let output = properties.filter(p => (p) && (p.length !== 0) && (p !== " "));
+		let output = properties.filter((p) => p && p.length !== 0 && p !== " ");
 		return output;
 	}
 
@@ -813,7 +823,7 @@ export class ItemUtils {
 
 		return {
 			ability: item.data.data?.save?.ability,
-			dc: item.getSaveDC()
+			dc: item.getSaveDC(),
 		};
 	}
 }

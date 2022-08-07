@@ -26,13 +26,13 @@ export function patchCoreFunctions() {
 
 /**
  * A version of libwrapper OVERRIDE that tries to get the original function.
- * We want Better Rolls and Core 5e to be swappable between each other,
+ * We want Superior Rolls and Core 5e to be swappable between each other,
  * and for other modules to wrap over it.
  * @param {*} target
  * @param {*} fn A curried function that takes the original and returns a function to pass to libwrapper
  */
 function override(target, fn) {
-	libWrapper.register("betterrolls5e", target, fn, "OVERRIDE", {chain: true});
+	libWrapper.register("betterrolls5e", target, fn, "OVERRIDE", { chain: true });
 }
 
 /**
@@ -43,11 +43,15 @@ function override(target, fn) {
  */
 function itemRoll(defaultRoll, options) {
 	// Handle options, same defaults as core 5e
-	options = mergeObject({
-		configureDialog: true,
-		createMessage: true,
-		event
-	}, options, { recursive: false });
+	options = mergeObject(
+		{
+			configureDialog: true,
+			createMessage: true,
+			event,
+		},
+		options,
+		{ recursive: false }
+	);
 	const { rollMode, createMessage, vanilla } = options;
 	const altKey = options.event?.altKey;
 	const item = this;
@@ -77,54 +81,57 @@ async function itemRollAttack(defaultRoll, options) {
 	}
 
 	const flags = this.actor.data.flags.dnd5e || {};
-	if ( !this.hasAttack ) {
-	  throw new Error("You may not place an Attack Roll with this Item.");
+	if (!this.hasAttack) {
+		throw new Error("You may not place an Attack Roll with this Item.");
 	}
 
 	let title = `${this.name} - ${game.i18n.localize("DND5E.AttackRoll")}`;
 
 	// get the parts and rollData for this item's attack
-	const {parts, rollData} = this.getAttackToHit();
+	const { parts, rollData } = this.getAttackToHit();
 
 	// Compose roll options
-	const rollConfig = mergeObject({
-		parts: parts,
-		actor: this.actor,
-		data: rollData,
-		title: title,
-		flavor: title,
-		dialogOptions: {
-			width: 400,
-			top: options.event ? options.event.clientY - 80 : null,
-			left: window.innerWidth - 710
+	const rollConfig = mergeObject(
+		{
+			parts: parts,
+			actor: this.actor,
+			data: rollData,
+			title: title,
+			flavor: title,
+			dialogOptions: {
+				width: 400,
+				top: options.event ? options.event.clientY - 80 : null,
+				left: window.innerWidth - 710,
+			},
+			messageData: {
+				speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+				"flags.dnd5e.roll": { type: "attack", itemId: this.id },
+			},
 		},
-		messageData: {
-			speaker: ChatMessage.getSpeaker({actor: this.actor}),
-			"flags.dnd5e.roll": { type: "attack", itemId: this.id }
-		}
-	}, options);
+		options
+	);
 	rollConfig.event = options.event;
 
 	// Expanded critical hit thresholds
-	if (( this.data.type === "weapon" ) && flags.weaponCriticalThreshold) {
-	  rollConfig.critical = parseInt(flags.weaponCriticalThreshold);
-	} else if (( this.data.type === "spell" ) && flags.spellCriticalThreshold) {
-	  rollConfig.critical = parseInt(flags.spellCriticalThreshold);
+	if (this.data.type === "weapon" && flags.weaponCriticalThreshold) {
+		rollConfig.critical = parseInt(flags.weaponCriticalThreshold);
+	} else if (this.data.type === "spell" && flags.spellCriticalThreshold) {
+		rollConfig.critical = parseInt(flags.spellCriticalThreshold);
 	}
 
 	// Elven Accuracy
-	if ( ["weapon", "spell"].includes(this.data.type) ) {
-	  if (flags.elvenAccuracy && ["dex", "int", "wis", "cha"].includes(this.abilityMod)) {
-		rollConfig.elvenAccuracy = true;
-	  }
+	if (["weapon", "spell"].includes(this.data.type)) {
+		if (flags.elvenAccuracy && ["dex", "int", "wis", "cha"].includes(this.abilityMod)) {
+			rollConfig.elvenAccuracy = true;
+		}
 	}
 
 	// Apply Halfling Lucky
-	if ( flags.halflingLucky ) rollConfig.halflingLucky = true;
+	if (flags.halflingLucky) rollConfig.halflingLucky = true;
 
 	// Invoke the d20 roll helper
 	const roll = await d20Roll(rollConfig);
-	if ( roll === false ) return null;
+	if (roll === false) return null;
 	return roll;
 }
 

@@ -1,4 +1,4 @@
-import { isAttack, isSave, isCheck } from "./betterrolls5e.js";
+import { isAttack, isSave, isCheck } from "./superiorrolls5e.js";
 import {
 	dnd5e,
 	i18n,
@@ -8,7 +8,7 @@ import {
 	Utils,
 	FoundryProxy,
 	pick,
-	findLast
+	findLast,
 } from "./utils/index.js";
 import { Renderer } from "./renderer.js";
 import { getSettings } from "./settings.js";
@@ -44,12 +44,15 @@ export class CustomRoll {
 		// Entries to show for the render
 		const rollState = Utils.getRollState({ event, ...params });
 		const roll = new CustomItemRoll(actor, { rollState }, [
-			['header', { title }],
-			['check', {
-				formula,
-				critThreshold: params?.critThreshold,
-				rollType
-			}]
+			["header", { title }],
+			[
+				"check",
+				{
+					formula,
+					critThreshold: params?.critThreshold,
+					rollType,
+				},
+			],
 		]);
 		await roll.toMessage();
 		return roll;
@@ -61,9 +64,11 @@ export class CustomRoll {
 	 * @param {string} skill shorthand referring to the skill name
 	 * @param {FullRollActorParams} params parameters
 	 */
-	static async rollSkill(actor, skill, params={}) {
+	static async rollSkill(actor, skill, params = {}) {
 		if (!(skill in dnd5e.skills)) {
-			throw new Error(`Better Rolls | Skill ${skill} does not exist. Valid values can be found in CONFIG.DND5E.skills`);
+			throw new Error(
+				`Superior Rolls | Skill ${skill} does not exist. Valid values can be found in CONFIG.DND5E.skills`
+			);
 		}
 		const label = i18n(dnd5e.skills[skill]);
 		const formula = (await ActorUtils.getSkillCheckRoll(actor, skill)).formula;
@@ -97,7 +102,7 @@ export class CustomRoll {
 	 * @param {String} rollType		String of either "check" or "save"
 	 * @param {FullRollActorParams} params
 	 */
-	static async rollAttribute(actor, ability, rollType, params={}) {
+	static async rollAttribute(actor, ability, rollType, params = {}) {
 		const label = dnd5e.abilities[ability];
 
 		let titleString;
@@ -175,7 +180,7 @@ export class CustomItemRoll {
 		// params.event is an available parameter for backwards compatibility reasons
 		// but really we're interested in the rollState. Replace it here.
 		// We don't want event to be serialized when flags are set
-		this.params = mergeObject(duplicate(defaultParams), params || {});	// General parameters for the roll as a whole.
+		this.params = mergeObject(duplicate(defaultParams), params || {}); // General parameters for the roll as a whole.
 		this.params.rollState = Utils.getRollState(this.params);
 		delete this.params.event;
 
@@ -322,17 +327,16 @@ export class CustomItemRoll {
 		return total;
 	}
 
-
 	/**
 	 * Generator to create an iterable flattened list
 	 * @private
 	 */
-	*iterEntries(list=null) {
+	*iterEntries(list = null) {
 		list = list ?? this.entries;
 		for (const entry of list) {
 			yield entry;
 			if (entry.entries) {
-				yield *this.iterEntries(entry.entries);
+				yield* this.iterEntries(entry.entries);
 			}
 		}
 	}
@@ -557,7 +561,7 @@ export class CustomItemRoll {
 		}
 
 		const multiroll = this.getEntry(id);
-		if (multiroll?.type !== 'multiroll' || multiroll.rollState) {
+		if (multiroll?.type !== "multiroll" || multiroll.rollState) {
 			return false;
 		}
 
@@ -575,7 +579,7 @@ export class CustomItemRoll {
 		}
 
 		// Determine roll result
-		const rollTotals = multiroll.entries.map(r => r.roll.total);
+		const rollTotals = multiroll.entries.map((r) => r.roll.total);
 		let chosenResult = rollTotals[0];
 		if (rollState == "highest") {
 			chosenResult = Math.max(...rollTotals);
@@ -584,7 +588,7 @@ export class CustomItemRoll {
 		}
 
 		// Mark the non-results as ignored
-		multiroll.entries.filter(r => r.roll.total != chosenResult).forEach(r => r.ignored = true);
+		multiroll.entries.filter((r) => r.roll.total != chosenResult).forEach((r) => (r.ignored = true));
 
 		// Update remaining properties
 		// Update crit status if not forcing crit
@@ -609,7 +613,7 @@ export class CustomItemRoll {
 
 		Hooks.call("preRollItemBetterRolls", this);
 
-		const item  = await this.getItem();
+		const item = await this.getItem();
 		const actor = await this.getActor();
 
 		// Pre-update item configurations which updates the params
@@ -647,26 +651,27 @@ export class CustomItemRoll {
 
 		// Show Advantage/Normal/Disadvantage dialog if enabled
 		const hasAttack = this.fields.some(
-			(f) => ["attack", "check", "custom", "tool", "toolcheck"].includes(f[0]) && !f[1]?.rollState);
+			(f) => ["attack", "check", "custom", "tool", "toolcheck"].includes(f[0]) && !f[1]?.rollState
+		);
 		if (!this.params.rollState && getSettings().queryAdvantageEnabled && hasAttack) {
-			const rollState = await new Promise(resolve => {
+			const rollState = await new Promise((resolve) => {
 				new Dialog({
 					title: i18n("br5e.querying.title"),
 					buttons: {
 						disadvantage: {
 							label: i18n("br5e.querying.disadvantage"),
-							callback: () => resolve("lowest")
+							callback: () => resolve("lowest"),
 						},
 						normal: {
 							label: i18n("br5e.querying.normal"),
-							callback: () => resolve("first")
+							callback: () => resolve("first"),
 						},
 						advantage: {
 							label: i18n("br5e.querying.advantage"),
-							callback: () => resolve("highest")
-						}
+							callback: () => resolve("highest"),
+						},
 					},
-					close: () => resolve("cancel")
+					close: () => resolve("cancel"),
 				}).render(true);
 			});
 
@@ -687,7 +692,7 @@ export class CustomItemRoll {
 			const consume = item.data.data.consume;
 			if (request.resource && consume?.type === "ammo") {
 				ammo = actor.items.get(consume.target);
-				const usage = item._getUsageUpdates({consumeResource: true});
+				const usage = item._getUsageUpdates({ consumeResource: true });
 				if (usage === false) {
 					this.error = true;
 					return;
@@ -702,6 +707,7 @@ export class CustomItemRoll {
 		}
 
 		// Consume ammo (now that fields have been processed)
+		ammoUpdate = Object.assign(ammoUpdate[0]);
 		if (ammo && !isObjectEmpty(ammoUpdate)) {
 			await ammo.update(ammoUpdate);
 		}
@@ -731,12 +737,12 @@ export class CustomItemRoll {
 		this.rolled = true;
 		this.error = false;
 		await Hooks.callAll("rollItemBetterRolls", this);
-		await new Promise(r => setTimeout(r, 25));
+		await new Promise((r) => setTimeout(r, 25));
 
 		// Add models (non-hidden) to dice pool (for 3D Dice)
 		for (const entry of this.entries) {
 			if (entry.type === "multiroll") {
-				this.dicePool.push(...entry.entries.map(e => e.roll), entry.bonus);
+				this.dicePool.push(...entry.entries.map((e) => e.roll), entry.bonus);
 			} else if (entry.type === "damage-group" && !entry.prompt) {
 				for (const subEntry of entry.entries) {
 					if (subEntry.type === "damage" || (subEntry.type === "crit" && subEntry.revealed)) {
@@ -761,7 +767,7 @@ export class CustomItemRoll {
 		// Transform rolls in fields into formulas when saving into flags
 		const fields = this.fields.map((field) => {
 			const newField = deepClone(field);
-			if (field[1] && 'formula' in field[1] && field[1].formula?.formula) {
+			if (field[1] && "formula" in field[1] && field[1].formula?.formula) {
 				newField[1].formula = field[1].formula.formula;
 			}
 			return newField;
@@ -777,19 +783,19 @@ export class CustomItemRoll {
 				entries: this.entries,
 				properties: this.properties,
 				params: this.params,
-				fields
-			}
+				fields,
+			},
 		};
 
 		// Clear fields if any has an actor or item,
 		// its too complicated for rerolling
 		// We can probably handle it in the future somehow using FoundryProxy
-		if (this.fields?.some(f => f[1]?.actor || f[1]?.item)) {
+		if (this.fields?.some((f) => f[1]?.actor || f[1]?.item)) {
 			console.log("BetterRolls5e | Roll fields are too complex for serialization, removing fields");
 			flags.betterrolls5e.fields = null;
 		}
 
-		if (this.fields.some(f => f[0] === "attack")) {
+		if (this.fields.some((f) => f[0] === "attack")) {
 			flags["dnd5e.roll.type"] = "attack";
 		}
 
@@ -801,8 +807,8 @@ export class CustomItemRoll {
 		// then embed the item data in the chat message
 		// We retrieve the private internal cached actor/items so that this method can stay synchronous.
 		const { _actor, _item } = this;
-		const wasConsumed = (_item?.data.type === "consumable") && !_actor.items.has(_item.id);
-		if (wasConsumed || (_item && !_item.id && _item?.data.effects.find(ae => !ae.data.transfer))) {
+		const wasConsumed = _item?.data.type === "consumable" && !_actor.items.has(_item.id);
+		if (wasConsumed || (_item && !_item.id && _item?.data.effects.find((ae) => !ae.data.transfer))) {
 			flags["dnd5e.itemData"] = _item.data;
 		}
 
@@ -819,7 +825,7 @@ export class CustomItemRoll {
 	 * @param {string} param0.rollMode roll mode to determine if private/public/etc
 	 * @returns {Promise<ChatMessage>} the created chat message
 	 */
-	async toMessage({ rollMode=null, createMessage=true }={}) {
+	async toMessage({ rollMode = null, createMessage = true } = {}) {
 		if (!this.rolled) {
 			await this.roll();
 		}
@@ -827,7 +833,7 @@ export class CustomItemRoll {
 		if (this.error) return;
 
 		const item = await this.getItem();
-		const actor = await this.getActor() ?? item?.actor;
+		const actor = (await this.getActor()) ?? item?.actor;
 		const hasMaestroSound = item && ItemUtils.hasMaestroSound(item);
 
 		// Create the chat message
@@ -840,7 +846,7 @@ export class CustomItemRoll {
 			...Utils.getWhisperData(rollMode),
 
 			// If not blank, D&D will try to modify the card...
-			roll: new Roll("0").roll({ async: false })
+			roll: new Roll("0").roll({ async: false }),
 		};
 
 		await Hooks.callAll("messageBetterRolls", this, chatData);
@@ -880,11 +886,11 @@ export class CustomItemRoll {
 	 * This repeat does not consume uses, and overrides advantage/disadvantage / prompts
 	 * @returns {Promise<CustomItemRoll>}
 	 */
-	async repeat(options={}) {
+	async repeat(options = {}) {
 		if (!this.canRepeat()) return;
 
 		// Show error messages if the item/actor was deleted
-		const subject = await this.getItem() ?? await this.getActor();
+		const subject = (await this.getItem()) ?? (await this.getActor());
 		if ((this.itemId || this.actorId) && !subject) {
 			const actor = await this.getActor();
 			const message = actor ? i18n("br5e.error.noItemWithId") : i18n("br5e.error.noActorWithId");
@@ -893,7 +899,7 @@ export class CustomItemRoll {
 		}
 
 		const invalidFields = ["description", "desc"];
-		const fields = duplicate(this.fields.filter(f => !invalidFields.includes(f[0])));
+		const fields = duplicate(this.fields.filter((f) => !invalidFields.includes(f[0])));
 		const params = duplicate(this.params);
 		params.consume = false;
 		params.rollState = Utils.getRollState(options);
@@ -908,7 +914,7 @@ export class CustomItemRoll {
 	 * Nothing updates until this method is called.
 	 * Requires the chat message to already exist.
 	 */
-	async update(additional={}) {
+	async update(additional = {}) {
 		const chatMessage = game.messages.get(this.messageId);
 		if (chatMessage) {
 			const item = await this.getItem();
@@ -916,11 +922,14 @@ export class CustomItemRoll {
 			const content = await this.render();
 			await Hooks.callAll("updateBetterRolls", this, content);
 			await this.dicePool.flush({ hasMaestroSound });
-			await chatMessage.update({
-				...flattenObject({ flags: duplicate(this._getFlags()) }),
-				content,
-				...additional
-			}, { diff: true });
+			await chatMessage.update(
+				{
+					...flattenObject({ flags: duplicate(this._getFlags()) }),
+					content,
+					...additional,
+				},
+				{ diff: true }
+			);
 		}
 	}
 
@@ -969,7 +978,7 @@ export class CustomItemRoll {
 			ammo,
 			slotLevel: this.params.slotLevel,
 			isCrit: this.isCrit,
-			settings: this.settings
+			settings: this.settings,
 		};
 
 		// Add non-null entries
@@ -983,8 +992,8 @@ export class CustomItemRoll {
 	 */
 	_createId() {
 		if (this._currentId < 0) {
-			const existing = this.entriesFlattened().map(e => Number(e.id));
-			this._currentId = Math.max(...existing.filter(id => !isNaN(id))) + 1;
+			const existing = this.entriesFlattened().map((e) => Number(e.id));
+			this._currentId = Math.max(...existing.filter((id) => !isNaN(id))) + 1;
 		}
 		return `${this._currentId++}`;
 	}
@@ -1038,7 +1047,7 @@ export class CustomItemRoll {
 			// Assign an id and add to group
 			entry.id = this._createId();
 			entry.group = groupEntry.id;
-			groupEntry.entries.push(entry)
+			groupEntry.entries.push(entry);
 		} else {
 			// Non-damage entry. Assign an id and add to list
 			entry.id = this._createId();
@@ -1062,33 +1071,45 @@ export class CustomItemRoll {
 			useCharge = {},
 			useTemplate = false,
 			fields = [],
-			val = (preset === 1) ? "altValue" : "value";
+			val = preset === 1 ? "altValue" : "value";
 
 		fields.push(["header"]);
 
 		if (brFlags) {
 			// Assume new action of the button based on which fields are enabled for Quick Rolls
 			function flagIsTrue(flag) {
-				return (brFlags[flag] && (brFlags[flag][val] == true));
+				return brFlags[flag] && brFlags[flag][val] == true;
 			}
 
 			// Returns the flag or alt-flag depending on setting
 			function getFlag(flag) {
-				return (brFlags[flag] ? (brFlags[flag][val]) : null);
+				return brFlags[flag] ? brFlags[flag][val] : null;
 			}
 
-			if (flagIsTrue("quickFlavor") && itemData.chatFlavor) { fields.push(["flavor"]); }
-			if (flagIsTrue("quickDesc")) { fields.push(["desc"]); }
-			if (flagIsTrue("quickAttack") && isAttack(item)) { fields.push(["attack"]); }
-			if (flagIsTrue("quickCheck") && isCheck(item)) { fields.push(["check"]); }
-			if (flagIsTrue("quickSave") && isSave(item)) { fields.push(["savedc"]); }
-			if (flagIsTrue("quickSave")) { fields.push(["ammosavedc"]); }
+			if (flagIsTrue("quickFlavor") && itemData.chatFlavor) {
+				fields.push(["flavor"]);
+			}
+			if (flagIsTrue("quickDesc")) {
+				fields.push(["desc"]);
+			}
+			if (flagIsTrue("quickAttack") && isAttack(item)) {
+				fields.push(["attack"]);
+			}
+			if (flagIsTrue("quickCheck") && isCheck(item)) {
+				fields.push(["check"]);
+			}
+			if (flagIsTrue("quickSave") && isSave(item)) {
+				fields.push(["savedc"]);
+			}
+			if (flagIsTrue("quickSave")) {
+				fields.push(["ammosavedc"]);
+			}
 
 			const quickDamage = Object.entries(getFlag("quickDamage") ?? []);
 			if (quickDamage.length > 0) {
 				for (let [i, damage] of quickDamage) {
 					const index = Number(i);
-					const versatile = (index == 0) && flagIsTrue("quickVersatile");
+					const versatile = index == 0 && flagIsTrue("quickVersatile");
 					if (damage) {
 						fields.push(["damage", { index, versatile }]);
 					}
@@ -1098,13 +1119,19 @@ export class CustomItemRoll {
 				fields.push(["ammo"]);
 			}
 
-			if (flagIsTrue("quickOther") && itemData?.formula) { fields.push(["other"]); }
-			if (flagIsTrue("quickProperties")) { properties = true; }
+			if (flagIsTrue("quickOther") && itemData?.formula) {
+				fields.push(["other"]);
+			}
+			if (flagIsTrue("quickProperties")) {
+				properties = true;
+			}
 
 			if (brFlags.quickCharges) {
 				useCharge = duplicate(getFlag("quickCharges"));
 			}
-			if (flagIsTrue("quickTemplate")) { useTemplate = true; }
+			if (flagIsTrue("quickTemplate")) {
+				useTemplate = true;
+			}
 
 			fields.push(["crit"]);
 		} else {
@@ -1137,7 +1164,8 @@ export class CustomItemRoll {
 
 		// Only run the dialog if the spell is not a cantrip
 		const isSpell = item.type === "spell";
-		const requireSpellSlot = isSpell && (data.level > 0) && CONFIG.DND5E.spellUpcastModes.includes(data.preparation.mode);
+		const requireSpellSlot =
+			isSpell && data.level > 0 && CONFIG.DND5E.spellUpcastModes.includes(data.preparation.mode);
 		if (requireSpellSlot) {
 			// The ability use dialog shows consumption prompts, but we cannot control the default values
 			// therefore we have to remove them then add them back.
@@ -1155,7 +1183,7 @@ export class CustomItemRoll {
 				spellLevel = spellFormData.level;
 				consume = Boolean(spellFormData.consumeSlot);
 				placeTemplate = Boolean(spellFormData.placeTemplate);
-			} catch(error) {
+			} catch (error) {
 				console.error(error);
 				return "error";
 			} finally {
@@ -1205,14 +1233,14 @@ export class CustomItemRoll {
 		// Merges update data from _getUsageUpdates() into the result dictionaries
 		// Note: mergeObject() also resolves "." nesting which is not what we want
 		function mergeUpdates(updates) {
-			actorUpdates = { ...actorUpdates, ...(updates.actorUpdates ?? {})};
-			itemUpdates = { ...itemUpdates, ...(updates.itemUpdates ?? {})};
-			resourceUpdates = { ...resourceUpdates, ...(updates.resourceUpdates ?? {})};
+			actorUpdates = { ...actorUpdates, ...(updates.actorUpdates ?? {}) };
+			itemUpdates = { ...itemUpdates, ...(updates.itemUpdates ?? {}) };
+			resourceUpdates = { ...resourceUpdates, ...(updates.resourceUpdates ?? {}) };
 		}
 
 		const itemData = item.data.data;
 		const hasUses = !!(Number(itemData.uses?.value) || itemData.uses?.per); // Actual check to see if uses exist on the item, even if params.useCharge.use == true
-		const hasResource = !!(itemData.consume?.target); // Actual check to see if a resource is entered on the item, even if params.useCharge.resource == true
+		const hasResource = !!itemData.consume?.target; // Actual check to see if a resource is entered on the item, even if params.useCharge.resource == true
 
 		const request = this.params.useCharge; // Has bools for quantity, use, resource, and charge
 		const recharge = itemData.recharge || {};
@@ -1230,12 +1258,15 @@ export class CustomItemRoll {
 
 		// Check for consuming quantity, but not uses
 		if (request.quantity && !consumeUsage) {
-			if (!quantity) { ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: item.name})); return "error"; }
+			if (!quantity) {
+				ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: item.name }));
+				return "error";
+			}
 		}
 
 		// Check for consuming charge ("Action Recharge")
 		if (consumeCharge && !recharge.charged) {
-			ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: item.name}));
+			ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: item.name }));
 			return "error";
 		}
 

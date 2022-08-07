@@ -1,8 +1,8 @@
 {
 	"I18N.MAINTAINERS": ["Red Reign"],
 
-	"Better Rolls": "Besser Würfeln",
-	"Better Rolls for 5e": "Besser Würfeln für 5e",
+	"Superior Rolls": "Besser Würfeln",
+	"Superior Rolls for 5e": "Besser Würfeln für 5e",
 
 	"br5e.rollButtonsEnabled.name": "Würfelbuttons zum Blatt hinzufügen",
 	"br5e.rollButtonsEnabled.hint": "Fügt Buttons zu Gegenständen, Zaubern und Merkmalen auf dem Blatt hinzu, die angezeigt werden, wenn der Gegenstand erweitert wird. Möglicherweise inkompatibel mit den Buttons des Modules \"Item Sheet Buttons\". Erfordert ein erneutes Öffnen des Blattes.",

@@ -42,12 +42,12 @@
 }
 
 .red-full .dice-roll .dice-row .dice-row-item.ignored {
-	opacity: .4;
+	opacity: 0.4;
 	border: 1px solid #888888;
 }
 
 .dnd5e.red-full.chat-card .dice-tooltip {
-	font-size:14px;
+	font-size: 14px;
 }
 
 .red-dual .mixed {
@@ -129,7 +129,7 @@
 }
 
 .dnd5e.red-full.chat-card footer.card-footer {
-	margin-top:2px;
+	margin-top: 2px;
 }
 
 .dnd5e.item form .item-betterRolls {
@@ -145,18 +145,18 @@
 }
 
 .dnd5e.sheet.item .item-betterRolls label.checkbox {
-		display: inline-table;
-		padding: 0px 8px;
+	display: inline-table;
+	padding: 0px 8px;
 }
 
 .card-buttons .adice5e.dmg.rolled {
-	display:inline-flex;
-	width:100%;
-	align-items:baseline;
+	display: inline-flex;
+	width: 100%;
+	align-items: baseline;
 }
 
 .die-result-overlay-br {
-	text-align: right!important;
+	text-align: right !important;
 	flex-grow: 1;
 	position: absolute;
 	left: 0;

@@ -58,7 +58,7 @@ import { i18n, Utils } from "./utils/index.js";
  * @property {Roll?} critRoll
  */
 
- /**
+/**
  * Model data for rendering bonus crit information.
  * @typedef CritDataProps
  * @type {object}
@@ -106,7 +106,7 @@ import { i18n, Utils } from "./utils/index.js";
  */
 
 /**
- * Shortcut function to render a templates in the better rolls template folder.
+ * Shortcut function to render a templates in the Superior Rolls template folder.
  * @param {string} path sub path of the template in the templates folder
  * @param {Object} props the props to render with
  * @returns {Promise<string>} rendered template
@@ -124,7 +124,7 @@ export class Renderer {
 	 * @param {RenderModel} model
 	 * @returns {Promise<string>}
 	 */
-	static async renderModel(model, settings=null) {
+	static async renderModel(model, settings = null) {
 		if (typeof model === "string" || !model) {
 			return model;
 		}
@@ -146,7 +146,7 @@ export class Renderer {
 			case "raw":
 				return model?.html ?? model.content?.html ?? model.content;
 			default:
-				console.error(`Unknown render model type ${model.type}`)
+				console.error(`Unknown render model type ${model.type}`);
 		}
 	}
 
@@ -159,7 +159,7 @@ export class Renderer {
 		return renderModuleTemplate("red-header.html", {
 			id: properties.id,
 			item: { img: img ?? "icons/svg/mystery-man.svg", name: title },
-			slotLevel
+			slotLevel,
 		});
 	}
 
@@ -183,16 +183,20 @@ export class Renderer {
 		// Show D20 die icons if enabled
 		let entries = properties.entries;
 		if (d20RollIconsEnabled) {
-			entries = entries.map(e => ({ ...e, d20Result: Utils.findD20Result(e.roll) }));
+			entries = entries.map((e) => ({ ...e, d20Result: Utils.findD20Result(e.roll) }));
 		}
 
 		// Create roll templates
-		const tooltips = await Promise.all(properties.entries.map(e => e.roll.getTooltip()));
+		const tooltips = await Promise.all(properties.entries.map((e) => e.roll.getTooltip()));
 		const bonusTooltip = await properties.bonus?.getTooltip();
 
 		// Render final result
 		return renderModuleTemplate("red-multiroll.html", {
-			...properties, title, entries, tooltips, bonusTooltip
+			...properties,
+			title,
+			entries,
+			tooltips,
+			bonusTooltip,
 		});
 	}
 
@@ -205,10 +209,7 @@ export class Renderer {
 		const isVersatile = properties.damageIndex === "versatile";
 		if (baseRoll?.terms.length === 0 && critRoll?.terms.length === 0) return;
 
-		const tooltips = (await Promise.all([
-			baseRoll?.getTooltip(),
-			critRoll?.getTooltip()
-		])).filter(t => t);
+		const tooltips = (await Promise.all([baseRoll?.getTooltip(), critRoll?.getTooltip()])).filter((t) => t);
 
 		settings = getSettings(settings);
 		const critString = settings.critString;
@@ -219,9 +220,9 @@ export class Renderer {
 		const replaceDamage = settings.contextReplacesDamage;
 
 		const labels = {
-			"1": [],
-			"2": [],
-			"3": []
+			1: [],
+			2: [],
+			3: [],
 		};
 
 		const dtype = CONFIG.betterRolls5e.combinedDamageTypes[damageType];
@@ -246,9 +247,9 @@ export class Renderer {
 		}
 
 		// Context (damage type and roll flavors)
-		const bonusContexts = Utils.getRollFlavors(baseRoll, critRoll).filter(c => c !== context);
+		const bonusContexts = Utils.getRollFlavors(baseRoll, critRoll).filter((c) => c !== context);
 		if (context || bonusContexts.length > 0) {
-			const contextStr = [context, bonusContexts.join("/")].filter(c=>c).join(" + ");
+			const contextStr = [context, bonusContexts.join("/")].filter((c) => c).join(" + ");
 			if (contextPlacement === titlePlacement && pushedTitle) {
 				const title = labels[contextPlacement][0];
 				labels[contextPlacement][0] = (title ? title + " " : "") + `(${contextStr})`;
@@ -267,13 +268,17 @@ export class Renderer {
 		}
 
 		const damageString = damageStringParts.join(" ");
-		if (damagePlacement !== "0" && damageString.length > 0 && !(replaceDamage && context && damagePlacement == contextPlacement)) {
+		if (
+			damagePlacement !== "0" &&
+			damageString.length > 0 &&
+			!(replaceDamage && context && damagePlacement == contextPlacement)
+		) {
 			labels[damagePlacement].push(damageString);
 		}
 
 		for (let p in labels) {
 			labels[p] = labels[p].join(" - ");
-		};
+		}
 
 		return renderModuleTemplate("red-damageroll.html", {
 			id: properties.id,
@@ -288,8 +293,8 @@ export class Renderer {
 			damagebottom: labels[3],
 			formula: baseRoll?.formula ?? critRoll.formula,
 			damageType,
-			maxRoll: baseRoll ? new Roll(baseRoll.formula).evaluate({maximize:true, async: false}).total : null,
-			maxCrit: critRoll ? new Roll(critRoll.formula).evaluate({maximize:true, async: false}).total : null
+			maxRoll: baseRoll ? new Roll(baseRoll.formula).evaluate({ maximize: true, async: false }).total : null,
+			maxCrit: critRoll ? new Roll(critRoll.formula).evaluate({ maximize: true, async: false }).total : null,
 		});
 	}
 
@@ -302,7 +307,7 @@ export class Renderer {
 		return renderModuleTemplate("red-save-button.html", {
 			id: properties.id,
 			abilityLabel,
-			...properties
+			...properties,
 		});
 	}
 
@@ -319,10 +324,7 @@ export class Renderer {
 
 			// Create the template, only do so if not of type crit unless crit is revealed
 			if (entry.type !== "crit" || entry.revealed) {
-				results.push(this.renderModel(
-					{...entry, group: properties.id },
-					settings
-				));
+				results.push(this.renderModel({ ...entry, group: properties.id }, settings));
 			}
 		}
 
@@ -363,7 +365,7 @@ export class Renderer {
 		const item = await data.getItem();
 
 		if (window.DAE && data.settings.applyActiveEffects) {
-			const hasEffects = item?.data.effects.find(ae => !ae.data.transfer);
+			const hasEffects = item?.data.effects.find((ae) => !ae.data.transfer);
 			if (hasEffects) {
 				const button = await renderModuleTemplate("red-ae-button.html");
 				templates.push(button);
@@ -372,12 +374,12 @@ export class Renderer {
 			const hasAmmo = item?.data.data.consume?.type === "ammo" && item?.data.data.consume?.target;
 			if (hasAmmo) {
 				const ammo = actor.items.get(item.data.data.consume.target);
-				const ammoHasEffects = ammo?.data.effects.find(ae => !ae.data.transfer);
+				const ammoHasEffects = ammo?.data.effects.find((ae) => !ae.data.transfer);
 
 				if (ammoHasEffects) {
 					const button = await renderModuleTemplate("red-ae-button.html", {
 						ammo: true,
-						context: ammo.data.name
+						context: ammo.data.name,
 					});
 					templates.push(button);
 				}
@@ -390,7 +392,7 @@ export class Renderer {
 			tokenId: data.tokenId,
 			isCritical: data.isCrit,
 			templates,
-			properties: data.properties
+			properties: data.properties,
 		});
 	}
 }

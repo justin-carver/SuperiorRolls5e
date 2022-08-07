@@ -1,10 +1,10 @@
 {
 	"I18N.MAINTAINERS": ["Red Reign"],
 
-	"Better Rolls": "Better Rolls",
-	"Better Rolls for 5e": "Better Rolls for 5e",
+	"Superior Rolls": "Superior Rolls",
+	"Superior Rolls for 5e": "Superior Rolls for 5e",
 
-	"br5e.migrating": "Applying Better Rolls System Migration for version {version}",
+	"br5e.migrating": "Applying Superior Rolls System Migration for version {version}",
 	"br5e.rollButtonsEnabled.name": "Add Extra Roll Buttons to Sheet",
 	"br5e.rollButtonsEnabled.hint": "Adds buttons to items, spells, and features in the sheet, which display when the item is expanded. May be incompatible with the Item Sheet Buttons mod. Requires reopening the sheet.",
 	"br5e.imageButtonEnabled.name": "Make Item Image Auto-roll",
@@ -14,7 +14,7 @@
 	"br5e.defaultRollArt.name": "Actor Roll Image Used",
 	"br5e.defaultRollArt.hint": "Determines which art is used by default for ability checks and saving throws. If this is not available (or is the default mystery man icon), it will use the other icon instead.",
 	"br5e.damageContextEnabled.name": "Damage Context Labels",
-	"br5e.damageContextEnabled.hint": "Allows entering context for damage labels, which precede the damage type. Only works on Better Rolls.",
+	"br5e.damageContextEnabled.hint": "Allows entering context for damage labels, which precede the damage type. Only works on Superior Rolls.",
 	"br5e.contextReplacesTitle.name": "Context Replaces Title Label",
 	"br5e.contextReplacesTitle.hint": "If a context label is in the same place as a damage roll's title label, such as \"Damage\" or \"Healing\", it will replace it.",
 	"br5e.contextReplacesDamage.name": "Context Replaces Damage Type",
@@ -34,9 +34,9 @@
 	"br5e.altSecondaryEnabled.name": "Alt-Click Image for Secondary Roll",
 	"br5e.altSecondaryEnabled.hint": "When Alt-clicking on an item's image, output a second Better Roll message which can be configured separately per-item. Overwrites ability to bypass with default chat output.",
 	"br5e.playRollSounds.name": "Enable Roll Sounds",
-	"br5e.playRollSounds.hint": "Plays a dice-rolling sound when a Better Rolls message is sent to chat. Wlll not play if Maestro's Item Track are enabled.",
+	"br5e.playRollSounds.hint": "Plays a dice-rolling sound when a Superior Rolls message is sent to chat. Wlll not play if Maestro's Item Track are enabled.",
 	"br5e.hideDC.name": "Hide Save DCs",
-	"br5e.hideDC.hint": "Determines if the DC is hidden on save DC buttons on Better Rolls.",
+	"br5e.hideDC.hint": "Determines if the DC is hidden on save DC buttons on Superior Rolls.",
 	"br5e.hideDC.string": "??",
 	"br5e.hideDC.choices.0": "Never",
 	"br5e.hideDC.choices.1": "NPCs Only",
@@ -64,7 +64,7 @@
 	"br5e.critBehavior.choices.4": "Max Base Damage, Roll Critical Damage",
 
 	"br5e.critString.name": "Critical Indicator",
-	"br5e.critString.hint": "Determines how criticals are labeled. Appears as text to the right of the critical damage roll. Only works on Better Rolls.",
+	"br5e.critString.hint": "Determines how criticals are labeled. Appears as text to the right of the critical damage roll. Only works on Superior Rolls.",
 	"br5e.critString.choices.2": "Crit",
 	"br5e.critString.choices.3": "Crit!",
 	"br5e.critString.choices.4": "(Crit)",
@@ -75,7 +75,7 @@
 
 	"br5e.chatDamageButtonsEnabled": {
 		"name": "Enable Apply Damage Buttons",
-		"hint": "Renders buttons on Better Rolls damage rolls that apply damage to selected tokens. Requires refreshing Foundry.",
+		"hint": "Renders buttons on Superior Rolls damage rolls that apply damage to selected tokens. Requires refreshing Foundry.",
 		"choices": {
 			"0": "Disabled",
 			"1": "Enabled",
@@ -92,7 +92,7 @@
 	"br5e.error.autoDestroy": "The {name} disappears as its last charge is consumed.",
 	"br5e.error.rollEvaluation": "Dice roll evaluation failed: {msg}",
 	"br5e.error.noDAE": "DAE is required to apply active effects to targets",
-	"br5e.error.libWrapperMinVersion": "Better Rolls requires libWrapper version {version} or newer.",
+	"br5e.error.libWrapperMinVersion": "Superior Rolls requires libWrapper version {version} or newer.",
 	"br5e.error.noVersatile": "Attempt to roll versatile damage when none was set",
 
 	"br5e.settings.critThreshold": "Critical Threshold",

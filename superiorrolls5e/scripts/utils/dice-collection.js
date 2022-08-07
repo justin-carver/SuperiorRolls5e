@@ -6,7 +6,7 @@ import { Utils } from "./utils.js";
  */
 export class DiceCollection {
 	/** Roll object containing all the dice */
-	pool = new Roll("0").roll({async: false});
+	pool = new Roll("0").roll({ async: false });
 
 	/**
 	 * Creates a new DiceCollection object
@@ -35,7 +35,7 @@ export class DiceCollection {
 	 * @param  {...Roll} rolls
 	 */
 	push(...rolls) {
-		for (const roll of rolls.filter(r => r)) {
+		for (const roll of rolls.filter((r) => r)) {
 			this.pool._dice.push(...roll.dice);
 		}
 	}
@@ -45,7 +45,7 @@ export class DiceCollection {
 	 * Currently its just Dice So Nice (if enabled).
 	 * @returns {Promise<boolean>} if there were dice in the pool
 	 */
-	async flush({ hasMaestroSound=false, whisperData=null }) {
+	async flush({ hasMaestroSound = false, whisperData = null }) {
 		// Get and reset immediately (stacking flush calls shouldn't roll more dice)
 		const pool = this.pop();
 
@@ -60,10 +60,14 @@ export class DiceCollection {
 			// Note: emited events aren't caught by the same client
 			// the push argument didn't work for me, so using sockets instead
 			Utils.playDiceSound();
-			game.socket.emit("module.betterrolls5e", {
-				action: "roll-sound",
-				user: game.user.id
-			}, () => console.log("Better Rolls | Roll Sound Message Sent"));
+			game.socket.emit(
+				"module.betterrolls5e",
+				{
+					action: "roll-sound",
+					user: game.user.id,
+				},
+				() => console.log("Superior Rolls | Roll Sound Message Sent")
+			);
 		}
 
 		return hasDice;
@@ -75,7 +79,7 @@ export class DiceCollection {
 	 */
 	pop() {
 		const pool = this.pool;
-		this.pool = new Roll("0").roll({async: false});
+		this.pool = new Roll("0").roll({ async: false });
 		return pool;
 	}
 }

@@ -7,7 +7,7 @@ const getBRSetting = (setting) => game.settings.get("betterrolls5e", setting);
  */
 class Settings {
 	/**
-	 * Register better rolls settings.
+	 * Register Superior Rolls settings.
 	 * This should only be called once, at initialization.
 	 */
 	init() {
@@ -15,8 +15,8 @@ class Settings {
 		game.settings.register("betterrolls5e", "migration", {
 			config: false,
 			default: { status: false, version: "1.0.0" },
-			scope: 'world',
-			type: Object
+			scope: "world",
+			type: Object,
 		});
 
 		game.settings.register("betterrolls5e", "d20Mode", {
@@ -30,8 +30,8 @@ class Settings {
 				1: i18n("br5e.d20Mode.choices.1"),
 				2: i18n("br5e.d20Mode.choices.2"),
 				3: i18n("br5e.d20Mode.choices.3"),
-				4: i18n("br5e.d20Mode.choices.4")
-			}
+				4: i18n("br5e.d20Mode.choices.4"),
+			},
 		});
 
 		// Enables damage buttons
@@ -41,7 +41,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: false,
-			type: Boolean
+			type: Boolean,
 		});
 
 		// Register added roll buttons
@@ -51,7 +51,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: true,
-			type: Boolean
+			type: Boolean,
 		});
 
 		// Register better roll for items
@@ -61,7 +61,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: true,
-			type: Boolean
+			type: Boolean,
 		});
 
 		// Does Alt Click perform an Alt Roll?
@@ -71,7 +71,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: true,
-			type: Boolean
+			type: Boolean,
 		});
 
 		// Show Apply Active Effects Button
@@ -81,8 +81,8 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: true,
-			type: Boolean
-		})
+			type: Boolean,
+		});
 
 		// Register quick roll defaults for description
 		game.settings.register("betterrolls5e", "quickDefaultDescriptionEnabled", {
@@ -91,7 +91,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: false,
-			type: Boolean
+			type: Boolean,
 		});
 
 		// Used to enable visually showing the natural die roll for a d20 roll.
@@ -101,7 +101,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: true,
-			type: Boolean
+			type: Boolean,
 		});
 
 		// Actor Roll Image Choices
@@ -113,9 +113,9 @@ class Settings {
 			default: "actor",
 			type: String,
 			choices: {
-				"actor": i18n("Actor"),
-				"token": i18n("Token")
-			}
+				actor: i18n("Actor"),
+				token: i18n("Token"),
+			},
 		});
 
 		// Register roll label options
@@ -127,14 +127,14 @@ class Settings {
 			default: "1",
 			type: String,
 			choices: {
-				"0": i18n("br5e.damageRollPlacement.choices.0"),
-				"1": i18n("br5e.damageRollPlacement.choices.1")
-			}
+				0: i18n("br5e.damageRollPlacement.choices.0"),
+				1: i18n("br5e.damageRollPlacement.choices.1"),
+			},
 		});
 
 		const damagePlacementOptions = ["damageTitlePlacement", "damageContextPlacement", "damageRollPlacement"];
 
-		damagePlacementOptions.forEach(placementOption => {
+		damagePlacementOptions.forEach((placementOption) => {
 			game.settings.register("betterrolls5e", placementOption, {
 				name: i18n(`br5e.${placementOption}.name`),
 				hint: i18n(`br5e.${placementOption}.hint`),
@@ -143,24 +143,24 @@ class Settings {
 				default: "1",
 				type: String,
 				choices: {
-					"0": i18n("br5e.damageRollPlacement.choices.0"),
-					"1": i18n("br5e.damageRollPlacement.choices.1"),
-					"2": i18n("br5e.damageRollPlacement.choices.2"),
-					"3": i18n("br5e.damageRollPlacement.choices.3")
-				}
+					0: i18n("br5e.damageRollPlacement.choices.0"),
+					1: i18n("br5e.damageRollPlacement.choices.1"),
+					2: i18n("br5e.damageRollPlacement.choices.2"),
+					3: i18n("br5e.damageRollPlacement.choices.3"),
+				},
 			});
 		});
 
 		const contextReplacementOptions = ["contextReplacesTitle", "contextReplacesDamage"];
 
-		contextReplacementOptions.forEach(contextOption => {
+		contextReplacementOptions.forEach((contextOption) => {
 			game.settings.register("betterrolls5e", contextOption, {
 				name: i18n(`br5e.${contextOption}.name`),
 				hint: i18n(`br5e.${contextOption}.hint`),
 				scope: "world",
 				config: true,
 				default: false,
-				type: Boolean
+				type: Boolean,
 			});
 		});
 
@@ -172,12 +172,12 @@ class Settings {
 			default: "1",
 			type: String,
 			choices: {
-				"0": i18n("br5e.critBehavior.choices.0"), // No Extra Damage
-				"1": i18n("br5e.critBehavior.choices.1"), // Roll Critical Damage Dice
-				"2": i18n("br5e.critBehavior.choices.2"), // Roll Base Damage, Max Critical
-				"3": i18n("br5e.critBehavior.choices.3"), // Max Base & Critical Damage
-				"4": i18n("br5e.critBehavior.choices.4"), // Max Base Damage, Roll Critical Damage
-			}
+				0: i18n("br5e.critBehavior.choices.0"), // No Extra Damage
+				1: i18n("br5e.critBehavior.choices.1"), // Roll Critical Damage Dice
+				2: i18n("br5e.critBehavior.choices.2"), // Roll Base Damage, Max Critical
+				3: i18n("br5e.critBehavior.choices.3"), // Max Base & Critical Damage
+				4: i18n("br5e.critBehavior.choices.4"), // Max Base Damage, Roll Critical Damage
+			},
 		});
 
 		game.settings.register("betterrolls5e", "critString", {
@@ -186,7 +186,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: "Crit",
-			type: String
+			type: String,
 		});
 
 		game.settings.register("betterrolls5e", "chatDamageButtonsEnabled", {
@@ -197,10 +197,10 @@ class Settings {
 			default: "1",
 			type: String,
 			choices: {
-				"0": i18n("br5e.chatDamageButtonsEnabled.choices.0"),
-				"1": i18n("br5e.chatDamageButtonsEnabled.choices.1"),
-				"2": i18n("br5e.chatDamageButtonsEnabled.choices.2"),
-			}
+				0: i18n("br5e.chatDamageButtonsEnabled.choices.0"),
+				1: i18n("br5e.chatDamageButtonsEnabled.choices.1"),
+				2: i18n("br5e.chatDamageButtonsEnabled.choices.2"),
+			},
 		});
 
 		game.settings.register("betterrolls5e", "playRollSounds", {
@@ -209,7 +209,7 @@ class Settings {
 			scope: "world",
 			config: true,
 			default: true,
-			type: Boolean
+			type: Boolean,
 		});
 
 		game.settings.register("betterrolls5e", "hideDC", {
@@ -220,10 +220,10 @@ class Settings {
 			default: "0",
 			type: String,
 			choices: {
-				"0": i18n("br5e.hideDC.choices.0"),
-				"1": i18n("br5e.hideDC.choices.1"),
-				"2": i18n("br5e.hideDC.choices.2"),
-			}
+				0: i18n("br5e.hideDC.choices.0"),
+				1: i18n("br5e.hideDC.choices.1"),
+				2: i18n("br5e.hideDC.choices.2"),
+			},
 		});
 	}
 
@@ -322,7 +322,7 @@ export const BRSettings = new Settings();
  * @param {Settings} config
  * @returns {Settings}
  */
-export const getSettings = config => {
+export const getSettings = (config) => {
 	if (!config || typeof config !== "object") {
 		return BRSettings;
 	}
@@ -342,7 +342,7 @@ export const getSettings = config => {
 			}
 
 			return Reflect.get(BRSettings, name);
-		}
+		},
 	});
 
 	proxy.isWrapped = true;

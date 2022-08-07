@@ -1,9 +1,9 @@
 /**
- * A specialized Dialog subclass for an extended prompt for Better Rolls
+ * A specialized Dialog subclass for an extended prompt for Superior Rolls
  * @type {Dialog}
  */
 export default class ExtendedPrompt extends Dialog {
-	constructor(item, dialogData={}, options={}) {
+	constructor(item, dialogData = {}, options = {}) {
 		super(dialogData, options);
 		this.options.classes = ["dnd5e", "dialog"];
 
